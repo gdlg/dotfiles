@@ -255,7 +255,7 @@ noremap ` +
 if has("autocmd")
 augroup netrw_dvorak_fix
     autocmd!
-    autocmd filetype netrw call Fix_netrw_maps_for_dvorak()
+    autocmd FileType netrw call Fix_netrw_maps_for_dvorak()
 augroup END
 function! Fix_netrw_maps_for_dvorak()
     noremap <buffer> t j
