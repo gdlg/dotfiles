@@ -4,7 +4,6 @@ set nocompatible              " be iMproved, required
 let g:ros_use_python_version=2
 let g:ros_catkin_make_options="-DPYTHON_EXECUTABLE=/usr/bin/python2 -DPYTHON_INCLUDE_DIR=/usr/include/python2.7 -DPYTHON_LIBRARY=/usr/lib/libpython2.7.so"
 
-
 " ~~~ Vundle packages ~~~
 filetype off                  " required
 
@@ -24,9 +23,18 @@ Plugin 'vim-scripts/Conque-GDB'
 "Plugin 'Valloric/YouCompleteMe'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'taketwo/vim-ros'
-Plugin 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
+Plugin 'tpope/vim-fugitive'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+"Plugin 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
 Plugin 'bogado/file-line'
 Plugin 'ivanov/vim-ipython'
+
+Plugin 'airblade/vim-gitgutter'
+Plugin 'sudo.vim'
+
+Plugin 'scrooloose/nerdtree'
+Plugin 'jistr/vim-nerdtree-tabs'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -53,6 +61,45 @@ colorscheme solarized
 
 " Show the status line even when only one buffer is displayed.
 set laststatus=2
+
+" Vim Airline
+let g:airline_solarized_bg='dark'
+let g:airline_powerline_fonts = 1
+
+let g:airline#extensions#default#section_truncate_width = {
+\ 'b': 79,
+\ 'x': 100,
+\ 'y': 140,
+\ 'z': 45,
+\ 'warning': 80,
+\ 'error': 80,
+\ }
+
+function! AirlineInit()
+
+  let spc = g:airline_symbols.space
+  let g:airline_section_a = airline#section#create_left(['mode', 'crypt', 'paste', 'keymap', 'capslock', 'iminsert'])
+  "let g:airline_section_a = airline#section#create_left(['mode', 'crypt', 'paste', 'keymap', 'spell', 'capslock', 'xkblayout', 'iminsert'])
+  let g:airline_section_b = airline#section#create(['hunks', 'branch'])
+  if exists("+autochdir") && &autochdir == 1
+    let g:airline_section_c = airline#section#create(['%<', 'path', spc, 'readonly'])
+  else
+    let g:airline_section_c = airline#section#create(['%<', 'file', spc, 'readonly'])
+  endif
+  let g:airline_section_gutter = airline#section#create(['%='])
+  let g:airline_section_x = airline#section#create_right(['bookmark', 'tagbar', 'gutentags', 'grepper', 'filetype'])
+  let g:airline_section_y = airline#section#create_right(['ffenc'])
+  if airline#util#winwidth() > 79
+    let g:airline_section_z = airline#section#create(['windowswap', 'obsession', '%3p%%'.spc, 'linenr', 'maxlinenr', spc.':%3v'])
+  else
+    let g:airline_section_z = airline#section#create(['%3p%%'.spc, 'linenr',  ':%3v'])
+  endif
+  let g:airline_section_error = airline#section#create(['ycm_error_count', 'syntastic-err', 'eclim', 'neomake_error_count', 'ale_error_count', 'languageclient_error_count'])
+  let g:airline_section_warning = airline#section#create(['ycm_warning_count',  'syntastic-warn', 'neomake_warning_count', 'ale_warning_count', 'languageclient_warning_count', 'whitespace'])
+
+endfunction
+autocmd VimEnter * call AirlineInit()
+
 
 " Recursively search for a Makefile in parent directories when using the :make
 " command.
@@ -81,7 +128,10 @@ let g:ycm_always_populate_location_list = 1
 
 " Enable the mouse
 set mouse=a
-set ttymouse=urxvt
+
+if !has('nvim')
+    set ttymouse=urxvt
+endif
 
 " More basic stuff
 syntax on
@@ -263,4 +313,6 @@ function! Fix_netrw_maps_for_dvorak()
     noremap <buffer> k s
 endfunction
 endif
+
+map <Leader>n <plug>NERDTreeTabsToggle<CR>
 
